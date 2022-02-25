@@ -1,6 +1,6 @@
-import type { File } from './types';
+import type { File, Possbilities } from './types';
 
-export function byString(o: any, s: string): any {
+export function byString(o: any, s: string): Possbilities {
   s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
   s = s.replace(/^\./, ''); // strip a leading dot
   const a = s.split('.');

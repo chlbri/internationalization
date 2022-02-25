@@ -5,7 +5,7 @@ import { promisify } from 'util';
 import { isFile, mergeDeep, byString } from './functions';
 import type { File } from './types';
 
-export { File, isFile };
+export { File, isFile, mergeDeep, byString };
 
 export default class Internationalization {
   paths: string[];
@@ -35,7 +35,13 @@ export default class Internationalization {
     return this._files;
   }
 
-  jsons: any[] = [];
+  private _locale = Internationalization.defaultLocale;
+
+  changeLocale(locale: string) {
+    this._locale = locale;
+  }
+
+  jsons: any = {};
 
   async init() {
     const promises = this.files.map(file => {
@@ -89,8 +95,8 @@ export default class Internationalization {
    * @param key The key of the string
    * @returns array, object, string, number, boolean
    */
-  getByKey(key: string): any {
-    return byString(this.jsons, key);
+  getByKey(key: string) {
+    return byString(this.jsons, `${this._locale}.${key}`);
   }
 
   private static entour(json: string, _entour: string) {
@@ -127,5 +133,7 @@ export default class Internationalization {
     const value = await _readFile(json);
     return value.toLocaleString();
   }
+
+  static defaultLocale = 'en';
   // #endregion
 }

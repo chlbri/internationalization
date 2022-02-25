@@ -1,11 +1,11 @@
 {
   "main": {
     "features": {
-      "title": "Features",
+      "title": "Services",
       "description": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
       "features": [
         {
-          "title": "Bookmark in on click",
+          "title": "A propos",
           "desc": "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.",
           "imageSrc": "/images/illustration-features-tab-1.png",
           "imageRatio": "aspect-536/346"

@@ -4,6 +4,8 @@
   "description": "https://github.com/chlbri/internationalization.git",
   "author": "chlbri <bri_lvi@icloud.com>",
   "license": "MIT",
+  "main":"index.js",
+  "typings": "index.d.ts",
   "devDependencies": {
     "@bemedev/npm-publish": "^0.0.1-pnpm2",
     "@types/faker": "^6.6.9",
