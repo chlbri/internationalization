@@ -1,1 +1,1 @@
-# https://github.com/chlbri/gitpod-typescript.git
+# https://github.com/chlbri/internationalization.git
