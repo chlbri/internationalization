@@ -1,8 +1,12 @@
 import fs from 'fs';
 import p from 'path';
 import { cwd } from 'process';
-import { File } from '../tests/locales/types';
 import { promisify } from 'util';
+
+export type File = {
+  absolute: string;
+  direct: string;
+};
 /**
  * Performs a deep merge of objects and returns new object. Does not modify
  * objects (immutable) and merges arrays via concatenation.
