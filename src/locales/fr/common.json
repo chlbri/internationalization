@@ -1,0 +1,34 @@
+{
+  "main": {
+    "features": {
+      "title": "Services",
+      "description": "Contrairement à la croyance populaire, le Lorem Ipsum n'est pas simplement un texte aléatoire. Il a ses racines dans un morceau de littérature latine classique de 45 avant JC, ce qui le rend vieux de plus de 2000 ans.",
+      "features": [
+        {
+          "title": "Bookmark in on click",
+          "desc": "Contrairement à la croyance populaire, le Lorem Ipsum n'est pas simplement un texte aléatoire. Il a ses racines dans un morceau de littérature latine classique de 45 avant JC, ce qui le rend vieux de plus de 2000 ans.",
+          "imageSrc": "/images/illustration-features-tab-1.png",
+          "imageRatio": "aspect-536/346"
+        },
+        {
+          "title": "Bookmark in on click",
+          "desc": "Contrairement à la croyance populaire, le Lorem Ipsum n'est pas simplement un texte aléatoire. Il a ses racines dans un morceau de littérature latine classique de 45 avant JC, ce qui le rend vieux de plus de 2000 ans.",
+          "imageSrc": "/images/illustration-features-tab-2.png",
+          "imageRatio": "aspect-478/393",
+          "right": true
+        },
+        {
+          "title": "Bookmark in on click",
+          "desc": "Contrairement à la croyance populaire, le Lorem Ipsum n'est pas simplement un texte aléatoire. Il a ses racines dans un morceau de littérature latine classique de 45 avant JC, ce qui le rend vieux de plus de 2000 ans.",
+          "imageSrc": "/images/illustration-features-tab-3.png",
+          "imageRatio": "aspect-478/393"
+        }
+      ]
+    }
+  },
+  "shared": {
+    "navbar": {
+      "items": ["Services", "Prix", "Contact"]
+    }
+  }
+}

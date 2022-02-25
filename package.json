@@ -1,5 +1,5 @@
 {
-  "name": "gitpod-typescript",
+  "name": "@bemedeev/internationalization",
   "version": "0.0.1",
   "description": "https://github.com/chlbri/internationalization.git",
   "author": "chlbri <bri_lvi@icloud.com>",
@@ -20,9 +20,9 @@
     "git-push": "git push --tags"
   },
   "devDependencies": {
+    "@bemedev/npm-publish": "^0.0.1-pnpm2",
     "@types/faker": "^6.6.9",
     "@types/jest": "^27.4.1",
-    "@types/lodash.merge": "^4.6.6",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "dayjs": "^1.10.7",
@@ -39,9 +39,6 @@
     "shelljs": "^0.8.5",
     "ts-jest": "^27.1.3",
     "typescript": "^4.5.5"
-  },
-  "dependencies": {
-    "lodash.merge": "^4.6.2"
   },
   "repository": "https://github.com/chlbri/internationalization.git"
 }

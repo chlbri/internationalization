@@ -141,3 +141,6 @@ yarn.lock
 
 #vscode
 .vscode
+
+#my
+build.npm.ts
