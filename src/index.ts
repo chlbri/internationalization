@@ -1,7 +1,7 @@
 import fs from 'fs';
 import p from 'path';
 import { cwd } from 'process';
-import { File } from './types';
+import { File } from '../tests/locales/types';
 import { promisify } from 'util';
 /**
  * Performs a deep merge of objects and returns new object. Does not modify
@@ -10,7 +10,7 @@ import { promisify } from 'util';
  * @param {...object} objects - Objects to merge
  * @returns {object} New object with merged key/values
  */
- export function mergeDeep(...objects: any[]) {
+export function mergeDeep(...objects: any[]) {
   const isObject = (obj: any) => obj && typeof obj === 'object';
 
   return objects.reduce((prev, obj) => {
@@ -30,7 +30,6 @@ import { promisify } from 'util';
     return prev;
   }, {});
 }
-
 
 function isFile(value: any): value is File {
   return (
@@ -157,16 +156,3 @@ export default class Internationalization {
   }
   // #endregion
 }
-
-const before = Date.now();
-const intern = new Internationalization();
-JSON.stringify(intern.jsons, null, 2);//?
-intern
-  .init()
-  .then(() => {
-    JSON.stringify(intern.jsons, null, 2); //?
-  })
-  .finally(() => {
-    const time = Date.now() - before;
-    time; //?
-  });
