@@ -142,3 +142,14 @@ yarn.lock
 
 # Library
 .gitpod-config
+
+# Settings
+.eslintignore
+.eslintrc.yml
+.gitpod.yml
+.prettierignore
+.prettierrc.yml
+jest.config.js
+tsconfig.json
+pnpm-lock.yaml
+tests
