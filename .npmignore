@@ -153,3 +153,6 @@ jest.config.js
 tsconfig.json
 pnpm-lock.yaml
 tests
+build.npm.js
+gitpod.temp.yml
+globals.d.ts
