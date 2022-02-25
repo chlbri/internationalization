@@ -2,47 +2,10 @@ import fs from 'fs';
 import p from 'path';
 import { cwd } from 'process';
 import { promisify } from 'util';
+import { isFile, mergeDeep, byString } from './functions';
+import type { File } from './types';
 
-export type File = {
-  absolute: string;
-  direct: string;
-};
-/**
- * Performs a deep merge of objects and returns new object. Does not modify
- * objects (immutable) and merges arrays via concatenation.
- *
- * @param {...object} objects - Objects to merge
- * @returns {object} New object with merged key/values
- */
-export function mergeDeep(...objects: any[]) {
-  const isObject = (obj: any) => obj && typeof obj === 'object';
-
-  return objects.reduce((prev, obj) => {
-    Object.keys(obj).forEach(key => {
-      const pVal = prev[key];
-      const oVal = obj[key];
-
-      if (Array.isArray(pVal) && Array.isArray(oVal)) {
-        prev[key] = pVal.concat(...oVal);
-      } else if (isObject(pVal) && isObject(oVal)) {
-        prev[key] = mergeDeep(pVal, oVal);
-      } else {
-        prev[key] = oVal;
-      }
-    });
-
-    return prev;
-  }, {});
-}
-
-function isFile(value: any): value is File {
-  return (
-    !!value.absolute &&
-    typeof value.absolute === 'string' &&
-    !!value.direct &&
-    typeof value.direct === 'string'
-  );
-}
+export { File, isFile };
 
 export default class Internationalization {
   paths: string[];
@@ -121,12 +84,14 @@ export default class Internationalization {
       .filter(file => !!file);
   }
 
-  // private static concat(...jsons: Record<string, any>[]) {
-  //   return jsons.reduce((prev, next) => {
-  //     prev = { ...prev, ...next };
-  //     return prev;
-  //   });
-  // }
+  /**
+   * The method to return the desired element
+   * @param key The key of the string
+   * @returns array, object, string, number, boolean
+   */
+  getByKey(key: string): any {
+    return byString(this.jsons, key);
+  }
 
   private static entour(json: string, _entour: string) {
     const fileName = json.split('locales/')[1];
@@ -134,7 +99,9 @@ export default class Internationalization {
     const len = _entours.length - 1;
     let out = '{';
     out += _entours
-      .map(ent => ent.replace(' ', '').replace('.json', ''))
+      .map(ent => {
+        return ent.replace('.json', '');
+      })
       .reduce((prev, next, i) => {
         prev = `${prev.includes('"') ? prev : `"${prev}"`}${
           i === len ? ':' : ':{'
@@ -142,9 +109,11 @@ export default class Internationalization {
 
         return prev;
       });
-    for (let index = 0; index < _entours.length - 1; index++) {
+
+    //Ajouter un nombre correspondant d'accolades fermantes
+    Array.from({ length: len }).forEach(() => {
       out += '}';
-    }
+    });
     return JSON.parse(out);
   }
 
