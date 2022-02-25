@@ -144,3 +144,4 @@ yarn.lock
 
 #my
 build.npm.ts
+build.npm.js
