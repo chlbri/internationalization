@@ -2,26 +2,22 @@ import fs from 'fs';
 import p from 'path';
 import { cwd } from 'process';
 import { promisify } from 'util';
-import { isFile, mergeDeep, byString } from './functions';
-import type { File } from './types';
+import { byString, isFile, mergeDeep } from './functions';
+import type { File, Options } from './types';
 
 export { File, isFile, mergeDeep, byString };
 
 export default class Internationalization {
   paths: string[];
-  constructor(...paths: string[]) {
+  constructor(paths: string[], private options?: Options) {
     this.paths = paths.length === 0 ? ['src', 'locales'] : paths;
-    this.initFiles(
-      Internationalization.readJsonDirFileNamesSync(...this.paths),
-    );
-  }
-  private static filterJson(path: fs.Dirent) {
-    return path.isFile() && p.extname(path.name) === '.json';
+    if (options?.sync) this.initSync();
   }
 
   private _files: File[] = [];
 
   private initFiles(..._jsons: any[]): void {
+    // if (this._files.length > 0) return;
     _jsons.forEach(file => {
       if (isFile(file)) {
         this._files.push(file);
@@ -44,6 +40,9 @@ export default class Internationalization {
   jsons: any = {};
 
   async init() {
+    this.initFiles(
+      Internationalization.readJsonDirFileNamesSync(...this.paths),
+    );
     const promises = this.files.map(file => {
       return () =>
         Internationalization.readJsonFileAsync(file.absolute).then(
@@ -58,6 +57,9 @@ export default class Internationalization {
   }
 
   initSync() {
+    this.initFiles(
+      Internationalization.readJsonDirFileNamesSync(...this.paths),
+    );
     this.jsons = mergeDeep(
       ...this.files.map(file => {
         return Internationalization.entour(
@@ -68,8 +70,15 @@ export default class Internationalization {
     );
   }
 
+  copyWith(paths?: string[], options?: Options) {
+    return new Internationalization(
+      paths ?? this.paths,
+      options ?? this.options,
+    );
+  }
+
   // #region Static
-  private static readJsonDirFileNamesSync(...paths: string[]): any[] {
+  private static readJsonDirFileNamesSync(...paths: string[]): File[] {
     const _path = p.resolve(cwd(), ...paths);
 
     const fileObjs = fs.readdirSync(_path, { withFileTypes: true });
@@ -87,7 +96,7 @@ export default class Internationalization {
             absolute: p.resolve(_path, file.name),
           };
       })
-      .filter(file => !!file);
+      .filter(file => !!file) as File[];
   }
 
   /**
@@ -102,7 +111,7 @@ export default class Internationalization {
   private static entour(json: string, _entour: string) {
     const fileName = json.split('locales/')[1];
     const _entours = [...fileName.split('/'), _entour];
-    const len = _entours.length - 1;
+    const length = _entours.length - 1;
     let out = '{';
     out += _entours
       .map(ent => {
@@ -110,17 +119,21 @@ export default class Internationalization {
       })
       .reduce((prev, next, i) => {
         prev = `${prev.includes('"') ? prev : `"${prev}"`}${
-          i === len ? ':' : ':{'
+          i === length ? ':' : ':{'
         }${next.includes('{') ? next : `"${next}"`}`;
 
         return prev;
       });
 
     //Ajouter un nombre correspondant d'accolades fermantes
-    Array.from({ length: len }).forEach(() => {
+    Array.from({ length }).forEach(() => {
       out += '}';
     });
     return JSON.parse(out);
+  }
+
+  private static filterJson(path: fs.Dirent) {
+    return path.isFile() && p.extname(path.name) === '.json';
   }
 
   static readJsonFileSync(json: string) {

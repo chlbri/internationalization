@@ -2,3 +2,8 @@
 node_modules
 publish
 publish_npm
+#Apple
+**/.DS_Store
+
+#Protopie
+proto.pie

@@ -142,6 +142,12 @@ yarn.lock
 #vscode
 .vscode
 
+#Apple
+**/.DS_Store
+
+#Protopie
+proto.pie
+
 #my
 build.npm.ts
 build.npm.js

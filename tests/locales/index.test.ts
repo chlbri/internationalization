@@ -11,40 +11,47 @@ const expecteds = {
 
 describe('Sync Translation', () => {
   it.concurrent('Nothing when not intialized', () => {
-    const intern = new Internationalization('tests', 'locales', 'en');
+    const intern = new Internationalization(['tests', 'locales', 'en']);
     expect(intern.jsons).toStrictEqual({});
   });
-  it.concurrent('For English, translations are created', () => {
-    const intern = new Internationalization('tests', 'locales', 'en');
-    intern.initSync();
+
+  it.concurrent('Initialized at construction', () => {
+    const intern = new Internationalization(['tests', 'locales', 'en'], {
+      sync: true,
+    });
     expect(intern.jsons).toStrictEqual({ en: expecteds.en });
   });
 
-  it.concurrent('For French, translations are created', () => {
-    const intern = new Internationalization('tests', 'locales', 'fr');
-    intern.initSync();
-    expect(intern.jsons).toStrictEqual({ fr: expecteds.fr });
-  });
+  describe('Translations are initialized', () => {
+    it.concurrent('For English', () => {
+      const intern = new Internationalization(['tests', 'locales', 'en']);
+      intern.initSync();
+      expect(intern.jsons).toStrictEqual({ en: expecteds.en });
+    });
 
-  it.concurrent(
-    'For Both french and english, translations are created',
-    () => {
-      const intern = new Internationalization('tests', 'locales');
+    it.concurrent('For French', () => {
+      const intern = new Internationalization(['tests', 'locales', 'fr']);
+      intern.initSync();
+      expect(intern.jsons).toStrictEqual({ fr: expecteds.fr });
+    });
+
+    it.concurrent('For Both french and english', () => {
+      const intern = new Internationalization(['tests', 'locales']);
       intern.initSync();
       expect(intern.jsons).toStrictEqual(expecteds);
-    },
-  );
+    });
+  });
 });
 
 describe('Async Translation', () => {
   it.concurrent('For English, translations are created', async () => {
-    const intern = new Internationalization('tests', 'locales', 'en');
+    const intern = new Internationalization(['tests', 'locales', 'en']);
     await intern.init();
     expect(intern.jsons).toStrictEqual({ en: expecteds.en });
   });
 
   it.concurrent('For French, translations are created', async () => {
-    const intern = new Internationalization('tests', 'locales', 'fr');
+    const intern = new Internationalization(['tests', 'locales', 'fr']);
     await intern.init();
     expect(intern.jsons).toStrictEqual({ fr: expecteds.fr });
   });
@@ -52,7 +59,7 @@ describe('Async Translation', () => {
   it.concurrent(
     'For Both french and english, translations are created',
     async () => {
-      const intern = new Internationalization('tests', 'locales');
+      const intern = new Internationalization(['tests', 'locales']);
       await intern.init();
       expect(intern.jsons).toStrictEqual(expecteds);
     },
@@ -60,8 +67,9 @@ describe('Async Translation', () => {
 });
 
 describe('Tests for returning the key', () => {
-  const intern = new Internationalization('tests', 'locales');
-  intern.initSync();
+  const intern = new Internationalization(['tests', 'locales'], {
+    sync: true,
+  });
 
   it.concurrent('Return Nothing when the key is not registered', () => {
     const notRegitered1 = 'not.registered1.com';
@@ -77,8 +85,9 @@ describe('Tests for returning the key', () => {
     const regitered1 = 'common.main.features.title';
     const regitered4 = 'common_copy.main2.features.title';
     describe('For English', () => {
-      const intern = new Internationalization('tests', 'locales');
-      intern.initSync();
+      const intern = new Internationalization(['tests', 'locales'], {
+        sync: true,
+      });
 
       it.concurrent('en.common.main.features.title', () => {
         expect(intern.getByKey(regitered1)).toBe('Features');
@@ -97,8 +106,9 @@ describe('Tests for returning the key', () => {
       });
     });
     describe('For French', () => {
-      const intern = new Internationalization('tests', 'locales');
-      intern.initSync();
+      const intern = new Internationalization(['tests', 'locales'], {
+        sync: true,
+      });
       intern.changeLocale('fr');
 
       it.concurrent('fr.common.main.features.title', () => {
