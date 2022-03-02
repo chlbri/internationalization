@@ -1,35 +1,24 @@
-import fs from 'fs';
 import p from 'path';
 import { cwd } from 'process';
-import { promisify } from 'util';
-import { isFile, mergeDeep, byString } from './functions';
+import { byString, isFile, mergeDeep } from './functions';
+import readDir from './read';
 import type { File } from './types';
 
 export { File, isFile, mergeDeep, byString };
 
 export default class Internationalization {
-  paths: string[];
+  private paths: string[];
   constructor(...paths: string[]) {
     this.paths = paths.length === 0 ? ['src', 'locales'] : paths;
-    this.initFiles(
-      Internationalization.readJsonDirFileNamesSync(...this.paths),
+  }
+
+  private _files: string[] = [];
+
+  private initFiles = async (..._jsons: string[]) => {
+    await Internationalization.readJsonDirFileNamesAsync(..._jsons).then(
+      values => this._files.push(...values),
     );
-  }
-  private static filterJson(path: fs.Dirent) {
-    return path.isFile() && p.extname(path.name) === '.json';
-  }
-
-  private _files: File[] = [];
-
-  private initFiles(..._jsons: any[]): void {
-    _jsons.forEach(file => {
-      if (isFile(file)) {
-        this._files.push(file);
-      } else {
-        this.initFiles(...file);
-      }
-    });
-  }
+  };
 
   get files() {
     return this._files;
@@ -41,62 +30,42 @@ export default class Internationalization {
     this._locale = locale;
   }
 
-  jsons: any = {};
+  _jsons: any = {};
 
-  async init() {
+  get jsons() {
+    return this._jsons;
+  }
+
+  init = async () => {
+    await this.initFiles(...this.paths);
     const promises = this.files.map(file => {
       return () =>
-        Internationalization.readJsonFileAsync(file.absolute).then(
-          value => {
-            return Internationalization.entour(file.absolute, value);
-          },
-        );
+        Internationalization.readJsonFileAsync(file).then(value => {
+          return Internationalization.entour(file, value);
+        });
     });
-    this.jsons = await Promise.all(promises.map(prom => prom())).then(
-      values => mergeDeep(...values),
+    this._jsons = await Promise.all(promises.map(prom => prom())).then(
+      values => {
+        return mergeDeep(...values);
+      },
     );
-  }
-
-  initSync() {
-    this.jsons = mergeDeep(
-      ...this.files.map(file => {
-        return Internationalization.entour(
-          file.absolute,
-          Internationalization.readJsonFileSync(file.absolute),
-        );
-      }),
-    );
-  }
-
-  // #region Static
-  private static readJsonDirFileNamesSync(...paths: string[]): any[] {
-    const _path = p.resolve(cwd(), ...paths);
-
-    const fileObjs = fs.readdirSync(_path, { withFileTypes: true });
-    return fileObjs
-      .map(file => {
-        if (file.isDirectory()) {
-          return Internationalization.readJsonDirFileNamesSync(
-            ...paths,
-            file.name,
-          );
-        }
-        if (Internationalization.filterJson(file))
-          return {
-            direct: p.resolve(_path.split('locales')[1], file.name),
-            absolute: p.resolve(_path, file.name),
-          };
-      })
-      .filter(file => !!file);
-  }
+  };
 
   /**
    * The method to return the desired element
    * @param key The key of the string
    * @returns array, object, string, number, boolean
    */
-  getByKey(key: string) {
+  getByKey = (key: string) => {
     return byString(this.jsons, `${this._locale}.${key}`);
+  };
+
+  // #region Static
+
+  private static readJsonDirFileNamesAsync(...paths: string[]) {
+    const dir = p.resolve(cwd(), ...paths);
+
+    return readDir({ dir, extension: 'json' });
   }
 
   private static entour(json: string, _entour: string) {
@@ -123,15 +92,10 @@ export default class Internationalization {
     return JSON.parse(out);
   }
 
-  static readJsonFileSync(json: string) {
-    return fs.readFileSync(json).toLocaleString();
-  }
-
   static async readJsonFileAsync(json: string) {
-    const _readFile = promisify(fs.readFile);
+    const value = await require(json);
 
-    const value = await _readFile(json);
-    return value.toLocaleString();
+    return JSON.stringify(value);
   }
 
   static defaultLocale = 'en';
