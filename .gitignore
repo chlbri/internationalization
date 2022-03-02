@@ -142,7 +142,10 @@ yarn.lock
 .vscode
 
 #Apple
-.DS_Store
+**/.DS_Store
+
+#Protopie
+proto.pie
 
 #my
 build.npm.ts

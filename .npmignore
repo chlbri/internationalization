@@ -143,6 +143,12 @@ yarn.lock
 # Library
 .gitpod-config
 
+#Apple
+**/.DS_Store
+
+#Protopie
+proto.pie
+
 # Settings
 .eslintignore
 .eslintrc.yml

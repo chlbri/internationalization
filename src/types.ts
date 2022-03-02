@@ -10,4 +10,8 @@ export type Possbilities =
   | any[]
   | object
   | undefined;
+
+export type Options = {
+  sync?: boolean;
+};
 //   export type State = 'idle' | 'loading' | 'loaded';

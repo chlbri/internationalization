@@ -9,28 +9,49 @@ const expecteds = {
   fr: { common: fr1, common_copy: fr2 },
 };
 
-async function usePrepareEn() {
-  const intern = new Internationalization('tests', 'locales');
-  await intern.init();
-  return intern.getByKey;
-}
+describe('Sync Translation', () => {
+  it.concurrent('Nothing when not intialized', () => {
+    const intern = new Internationalization(['tests', 'locales', 'en']);
+    expect(intern.jsons).toStrictEqual({});
+  });
 
-async function usePrepareFr() {
-  const intern = new Internationalization('tests', 'locales');
-  await intern.init();
-  intern.changeLocale('fr');
-  return intern.getByKey;
-}
+  it.concurrent('Initialized at construction', () => {
+    const intern = new Internationalization(['tests', 'locales', 'en'], {
+      sync: true,
+    });
+    expect(intern.jsons).toStrictEqual({ en: expecteds.en });
+  });
+
+  describe('Translations are initialized', () => {
+    it.concurrent('For English', () => {
+      const intern = new Internationalization(['tests', 'locales', 'en']);
+      intern.initSync();
+      expect(intern.jsons).toStrictEqual({ en: expecteds.en });
+    });
+
+    it.concurrent('For French', () => {
+      const intern = new Internationalization(['tests', 'locales', 'fr']);
+      intern.initSync();
+      expect(intern.jsons).toStrictEqual({ fr: expecteds.fr });
+    });
+
+    it.concurrent('For Both french and english', () => {
+      const intern = new Internationalization(['tests', 'locales']);
+      intern.initSync();
+      expect(intern.jsons).toStrictEqual(expecteds);
+    });
+  });
+});
 
 describe('Async Translation', () => {
   it.concurrent('For English, translations are created', async () => {
-    const intern = new Internationalization('tests', 'locales', 'en');
+    const intern = new Internationalization(['tests', 'locales', 'en']);
     await intern.init();
     expect(intern._jsons).toStrictEqual({ en: expecteds.en });
   });
 
   it.concurrent('For French, translations are created', async () => {
-    const intern = new Internationalization('tests', 'locales', 'fr');
+    const intern = new Internationalization(['tests', 'locales', 'fr']);
     await intern.init();
     expect(intern._jsons).toStrictEqual({ fr: expecteds.fr });
   });
@@ -38,7 +59,7 @@ describe('Async Translation', () => {
   it.concurrent(
     'For Both french and english, translations are created',
     async () => {
-      const intern = new Internationalization('tests', 'locales');
+      const intern = new Internationalization(['tests', 'locales']);
       await intern.init();
       expect(intern._jsons).toStrictEqual(expecteds);
     },
@@ -46,7 +67,11 @@ describe('Async Translation', () => {
 });
 
 describe('Tests for returning the key', () => {
-  it('Return Nothing when the key is not registered', async () => {
+  const intern = new Internationalization(['tests', 'locales'], {
+    sync: true,
+  });
+
+  it.concurrent('Return Nothing when the key is not registered', () => {
     const notRegitered1 = 'not.registered1.com';
     const notRegitered2 = 'not.registered2.com';
     const getKey = await usePrepareEn();
@@ -61,14 +86,14 @@ describe('Tests for returning the key', () => {
     const regitered1 = 'common.main.features.title';
     const regitered4 = 'common_copy.main2.features.title';
     describe('For English', () => {
-      it('common.main.features.title', async () => {
-        const getKey = await usePrepareEn();
-        expect(getKey(regitered1)).toBe('Features');
+      const intern = new Internationalization(['tests', 'locales'], {
+        sync: true,
       });
-      it('en.common.main.features.features[0].title', async () => {
-        const getKey = await usePrepareEn();
-        expect(getKey(regitered2)).toBe('Bookmark in on click');
+
+      it.concurrent('en.common.main.features.title', () => {
+        expect(intern.getByKey(regitered1)).toBe('Features');
       });
+      
       it('en.common.main.features.features[1].imageRatio', async () => {
         const getKey = await usePrepareEn();
         expect(getKey(regitered3)).toBe('aspect-478/393');
@@ -78,6 +103,11 @@ describe('Tests for returning the key', () => {
         expect(getKey(regitered4)).toBe('Features2');
       });
     });
+    describe('For French', () => {
+      const intern = new Internationalization(['tests', 'locales'], {
+        sync: true,
+      });
+      intern.changeLocale('fr');
 
     describe('For French', () => {
       it('fr.common.main.features.title', async () => {
